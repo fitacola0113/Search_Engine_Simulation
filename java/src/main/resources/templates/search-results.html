@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Resultados para: ' + ${query}">Resultados</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <a href="/">&larr; Nova Pesquisa</a>
+        </nav>
+        <hgroup>
+            <h1>Resultados da Pesquisa</h1>
+            <h3 th:text="'Para: ' + ${query}"></h3>
+        </hgroup>
+
+        <!-- Resumo da IA -->
+        <article th:if="${aiSummary}" style="background-color: #f0f9ff; border-left: 4px solid #0284c7;">
+            <header>
+                <strong>📝 Resumo por IA</strong>
+            </header>
+            <p th:text="${aiSummary}" style="white-space: pre-line;"></p>
+        </article>
+
+        <div th:if="${error}" class="notice error" th:text="${error}"></div>
+
+        <div id="results-container">
+            <div th:if="${results.isEmpty()}">
+                <p>Nenhum resultado encontrado.</p>
+            </div>
+            <article th:each="result : ${results}">
+                <h4 th:text="${result.title}">Título do Resultado</h4>
+                <a th:href="${result.url}" th:text="${result.url}" target="_blank"></a>
+                <p th:text="${result.snippet}">Descrição do resultado...</p>
+            </article>
+        </div>
+
+        <div id="load-more-container" th:if="${hasMore}">
+            <button id="load-more-btn">Carregar mais</button>
+        </div>
+    </main>
+
+    <script>
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const loadMoreContainer = document.getElementById('load-more-container');
+
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', async () => {
+                loadMoreBtn.setAttribute('aria-busy', 'true');
+                try {
+                    const response = await fetch('/search/more');
+                    const newResults = await response.json();
+
+                    if (newResults.length === 0) {
+                        loadMoreContainer.innerHTML = '<p>Não há mais resultados.</p>';
+                        return;
+                    }
+
+                    newResults.forEach(result => {
+                        const article = document.createElement('article');
+                        article.innerHTML = `
+                            <h4>${result.title}</h4>
+                            <a href="${result.url}" target="_blank">${result.url}</a>
+                            <p>${result.snippet}</p>
+                        `;
+                        resultsContainer.appendChild(article);
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao carregar mais resultados:', error);
+                    loadMoreContainer.innerHTML = '<p>Ocorreu um erro.</p>';
+                } finally {
+                    loadMoreBtn.removeAttribute('aria-busy');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

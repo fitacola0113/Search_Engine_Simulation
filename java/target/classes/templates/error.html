@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+<body>
+    <main class="container">
+        <hgroup>
+            <h1>Ocorreu um Erro</h1>
+            <p th:text="${error ?: 'Ocorreu um erro inesperado.'}">Mensagem de erro aqui.</p>
+        </hgroup>
+        <a href="/" role="button">Voltar à Página Inicial</a>
+    </main>
+</body>
+</html>

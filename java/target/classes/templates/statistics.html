@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estatísticas em Tempo Real</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <!-- Bibliotecas para WebSocket -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <a href="/">&larr; Voltar à Pesquisa</a>
+        </nav>
+        <hgroup>
+            <h1>Estatísticas em Tempo Real</h1>
+            <h2>Os dados são atualizados automaticamente via WebSocket</h2>
+        </hgroup>
+
+        <div class="grid">
+            <section>
+                <h3>Top 10 Pesquisas</h3>
+                <table id="top-searches-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Termo</th>
+                            <th>Contagem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-searches-body">
+                        <!-- Os dados serão inseridos aqui via JS -->
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <h3>Barrels Ativos</h3>
+                <div id="active-barrels-container">
+                    <!-- Os dados serão inseridos aqui via JS -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const topSearchesBody = document.getElementById('top-searches-body');
+        const barrelsContainer = document.getElementById('active-barrels-container');
+
+        // Função para renderizar os dados na página
+        function renderStatistics(stats) {
+            // 1. Renderizar Top Searches
+            topSearchesBody.innerHTML = ''; // Limpa a tabela
+            if (stats.topSearches && stats.topSearches.length > 0) {
+                stats.topSearches.forEach((item, index) => {
+                    const row = `<tr><td>${index + 1}</td><td>${item.query}</td><td>${item.count}</td></tr>`;
+                    topSearchesBody.innerHTML += row;
+                });
+            } else {
+                topSearchesBody.innerHTML = '<tr><td colspan="3">Aguardando dados...</td></tr>';
+            }
+
+            // 2. Renderizar Barrels Ativos
+            barrelsContainer.innerHTML = ''; // Limpa o container
+            if (stats.activeBarrels && Object.keys(stats.activeBarrels).length > 0) {
+                for (const [name, data] of Object.entries(stats.activeBarrels)) {
+                    const card = `
+                        <article>
+                            <strong>${name}</strong><br>
+                            Tempo Médio: ${data.averageTime} ms<br>
+                            Tamanho do Índice: ${data.indexSize}
+                        </article>
+                    `;
+                    barrelsContainer.innerHTML += card;
+                }
+            } else {
+                barrelsContainer.innerHTML = '<p>Nenhum barrel ativo.</p>';
+            }
+        }
+
+        // FASE 1: PULL - Carregar dados iniciais
+        async function fetchInitialData() {
+            try {
+                const response = await fetch('/api/statistics');
+                const initialStats = await response.json();
+                renderStatistics(initialStats);
+            } catch (error) {
+                console.error('Erro ao carregar dados iniciais:', error);
+            }
+        }
+
+        // FASE 2: PUSH - Conectar ao WebSocket
+        function connectWebSocket() {
+            const socket = new SockJS('/ws'); // Endpoint de conexão
+            const stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, (frame) => {
+                console.log('Conectado ao WebSocket: ' + frame);
+                // Subscreve ao tópico de estatísticas
+                stompClient.subscribe('/topic/statistics', (message) => {
+                    console.log('Nova estatística recebida!');
+                    const newStats = JSON.parse(message.body);
+                    renderStatistics(newStats); // Re-renderiza a página com os novos dados
+                });
+            }, (error) => {
+                console.error('Erro de WebSocket: ' + error);
+            });
+        }
+
+        // Iniciar tudo quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchInitialData();
+            connectWebSocket();
+        });
+    </script>
+</body>
+</html>

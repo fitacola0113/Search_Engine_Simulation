@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Motor de Busca SD</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <style>
+        body { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        main { max-width: 700px; text-align: center; }
+        nav { position: absolute; top: 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/index" role="button" class="secondary">Indexar URL</a>
+        <a href="/backlinks" role="button" class="secondary">Ver Backlinks</a>
+        <a href="/statistics" role="button" class="contrast">Ver Estatísticas ✨</a>
+    </nav>
+    <main class="container">
+        <hgroup>
+            <h1>Motor de Busca SD</h1>
+            <h2>Pesquise na web distribuída</h2>
+        </hgroup>
+        <form action="/search" method="get">
+            <input type="search" id="query" name="query" placeholder="O que procura?" required>
+            <button type="submit">Pesquisar</button>
+        </form>
+    </main>
+</body>
+</html>

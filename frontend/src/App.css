@@ -1,0 +1,347 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 
+
+===========================
+   FLOATING MENU CIRCULAR
+=========================== 
+
+*/
+
+.floating-menu-container {
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+/* Wrapper para MetaBalls soltas */
+.metaballs-wrapper {
+  width: 100px;
+  height: 100px;
+  bottom: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.metaballs-wrapper:hover {
+  transform: scale(1.1);
+}
+
+.menu-arc {
+  position: fixed;
+  bottom: -325px;
+  left: 50%;
+  width: 650px;
+  height: 650px;
+  margin-left: -325px;
+  background: transparent;
+  cursor: default;
+  transform: scale(0);
+  transform-origin: center center;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animação de abertura */
+.menu-arc.open {
+  animation: smoothExpand 0.5s ease-out forwards;
+}
+
+/* Animação de fecho */
+.menu-arc.closing {
+  animation: smoothCollapse 0.5s ease-in forwards;
+}
+
+@keyframes smoothExpand {
+  0% {
+    transform: scale(0);
+    bottom: -250px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    bottom: -325px;
+    opacity: 1;
+  }
+}
+
+@keyframes smoothCollapse {
+  0% {
+    transform: scale(1);
+    bottom: -325px;
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    bottom: -250px;
+    opacity: 0;
+  }
+}
+
+/* Imagem PNG da forma customizada */
+.custom-shape-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: rotateShape 40s linear infinite;
+}
+
+@keyframes rotateShape {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* X no centro */
+.menu-toggle {
+  position: absolute;
+  bottom: 350px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 60px;
+  font-weight: 100;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  transition: transform 0.3s ease;
+  line-height: 1;
+  opacity: 0;
+}
+
+.menu-arc.open .menu-toggle {
+  animation: fadeIn 0.3s ease 0.5s forwards;
+}
+
+.menu-arc.closing .menu-toggle {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+}
+
+.menu-toggle:hover {
+  transform: translateX(-50%) scale(1.2);
+}
+
+.menu-icon {
+  pointer-events: none;
+}
+
+/* Container para texto curvado */
+.curved-text-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-arc.open .curved-text-container {
+  animation: fadeInText 0.3s ease 0.3s forwards;
+  pointer-events: auto;
+}
+
+.menu-arc.closing .curved-text-container {
+  animation: fadeOutText 0.2s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutText {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* SVG com texto curvado */
+.curved-text-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.curved-svg-text {
+  font-family: "Bowlby One", sans-serif;
+  font-size: 28px;
+  fill: white;
+  pointer-events: none;
+}
+
+/* Texto clicável */
+.clickable-text {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+.clickable-text:hover {
+  font-weight: 1000;
+  fill: #ffffff;
+}
+
+/* Componentes reutilizáveis */
+.card {
+  background-color: #16213e;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+  background-color: #4a9eff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #3a7fd5;
+}
+
+.btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #4a9eff;
+  border-radius: 5px;
+  background-color: #0f3460;
+  color: #eaeaea;
+  font-size: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #6eb5ff;
+}
+
+.error-message {
+  background-color: #ff4d4d;
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #4a9eff;
+  font-size: 1.2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .menu-arc {
+    width: 280px;
+    height: 280px;
+    margin-left: -140px;
+  }
+  
+  .metaballs-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .curved-svg-text {
+    font-size: 24px;
+  }
+
+  .menu-toggle {
+    font-size: 48px;
+    bottom: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-arc {
+    width: 220px;
+    height: 220px;
+    margin-left: -110px;
+  }
+  
+  .curved-svg-text {
+    font-size: 20px;
+  }
+
+  .menu-toggle {
+    bottom: 90px;
+  }
+}

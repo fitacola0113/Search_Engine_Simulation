@@ -1,0 +1,392 @@
+:root {
+  --color-dark: #2c2c2c;
+  --color-green: #8ac97a;
+  --color-red: #c76d6d;
+  --color-bg: #ffffff;
+  --font-header: 'Bowlby One', sans-serif;
+  --font-body: 'Lexend', sans-serif;
+  --card-height: 700px; /* Altura da Top Searches Card */
+  --barrel-card-height: calc(var(--card-height) - 80px); /* Altura do cartão de detalhe (700px - 80px de padding/moldura) */
+  --barrel-width-detail: 1.5fr; /* Largura da coluna Barrel no detalhe */
+  --searches-width-detail: 0.85fr; /* Largura da coluna Top Searches no detalhe */
+}
+
+.stats-layout {
+  min-height: 100vh;
+  background-color: white;
+  padding: 2rem;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- HEADER --- */
+.stats-header-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.logo-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+}
+
+.paw-icon-stats {
+  width: 60px;
+  height: 60px;
+}
+
+.stats-main-title {
+  font-family: var(--font-header);
+  font-size: 4rem;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+/* --- GRID LAYOUT (Controlando Larguras para Alinhamento) --- */
+.stats-content-grid {
+  display: grid;
+  /* Largura padrão: 1fr (Top Searches) e 1.2fr (Barrels) */
+  grid-template-columns: 1fr 1.2fr;
+  gap: 4rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 2rem;
+  transition: grid-template-columns 0.4s ease-in-out, max-width 0.4s ease-in-out, gap 0.4s ease-in-out;
+}
+
+/* Estado de Detalhe (Alinhamento Central e Redimensionamento) */
+.stats-content-grid.detail-open {
+  /* Altera o grid para ter o tamanho total desejado: Top Searches + Barrel Detail */
+  max-width: 1350px; /* Aumentado para acomodar o Barrel maior e manter a distância lateral */
+  
+  /* Ajusta as colunas para que o Barrel (1.5fr) seja ligeiramente maior que Top Searches (0.85fr) */
+  /* Mantém a proporção e "empurra" o Top Searches para a esquerda */
+  grid-template-columns: var(--searches-width-detail) var(--barrel-width-detail); 
+  gap: 3rem;
+}
+
+
+/* --- LEFT: TOP 10 CARD --- */
+.top-searches-card {
+  background-color: #f0f0f0;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  height: var(--card-height); /* Altura Fixa */
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+/* Move Top 10 ligeiramente para a esquerda */
+.top-searches-card.detail-open {
+    transform: translateX(-10px);
+    opacity: 0.95;
+}
+
+.card-header.dark {
+  background-color: var(--color-dark);
+  color: white;
+  border-radius: 30px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.card-header h2 {
+  margin: 0 0 1rem 0;
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.table-header-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  padding: 0 1rem;
+  font-size: 1rem;
+}
+
+/* Scrollable List */
+.scrollable-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+.scrollable-list::-webkit-scrollbar {
+  display: none;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 2px dashed #ddd;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* --- RIGHT: BARRELS --- */
+.barrels-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Lista de Barrels */
+.barrels-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: var(--card-height); 
+  overflow-y: auto;
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+  padding: 15px; 
+  margin: -15px; 
+}
+
+.barrels-list-view::-webkit-scrollbar {
+  display: none; 
+}
+
+.barrel-card {
+  background-color: var(--color-dark);
+  border-radius: 20px;
+  overflow: hidden;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s, background-color 0.3s;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; 
+}
+
+.barrel-card.clickable:hover {
+  transform: scale(1.03); 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  cursor: pointer;
+  z-index: 1; 
+}
+
+.barrel-info {
+  padding: 2rem;
+  text-align: center;
+}
+
+.barrel-info h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+.big-numbers {
+  display: flex;
+  justify-content: space-between; 
+  font-family: var(--font-header);
+  font-size: 2.2rem;
+}
+
+/* Status Bar */
+.status-bar {
+  padding: 0.8rem;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: var(--font-header);
+  letter-spacing: 1px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.status-bar.active {
+  background-color: var(--color-green);
+  color: #385e33;
+}
+
+.status-bar.inactive {
+  background-color: var(--color-red);
+  color: #5e2b2b;
+}
+
+/* --- NOVO DETAIL VIEW --- */
+.barrel-detail-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Altura total = Altura da Top Searches Card */
+  height: var(--card-height); 
+  transition: all 0.4s ease-in-out; 
+  position: relative; /* Para posicionar a moldura (shadow) */
+}
+
+/* 1. Nova Moldura/Shadow de Navegação (Substitui as Abas e Setas) */
+.barrel-shadow-nav {
+    position: absolute;
+    /* Alinha o centro verticalmente */
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Altura e Largura um pouco maiores que o cartão principal */
+    width: 95%; /* Ajusta à largura da coluna */
+    height: var(--card-height); 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+    /* Configurações da moldura */
+    background-color: #4a4a4a; /* Cor escura para a moldura */
+    border-radius: 30px; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    
+    /* Transições de animação */
+    transition: all 0.4s ease-in-out;
+}
+
+.shadow-bar {
+    width: 90%;
+    height: 30px;
+    background-color: #5d5d5d;
+    border-radius: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.shadow-bar:hover {
+    background-color: #707070;
+}
+
+/* 2. Cartão de Detalhe Fixo (Primeiro Plano) */
+.barrel-card.detail-card {
+  position: absolute;
+  /* Centraliza o cartão dentro do barrel-detail-view */
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.0); /* Não escalamos mais, apenas transform */
+  
+  /* Largura e Altura Fixas (Ocupa 90% da Moldura Sombra) */
+  width: 90%; 
+  height: var(--barrel-card-height); 
+  
+  cursor: default; /* Remove cursor de click */
+  border: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  transition: all 0.4s ease-in-out; /* Transições suaves */
+}
+
+.barrel-card.detail-card.clickable:hover {
+    transform: translate(-50%, -50%) scale(1.05); /* Escala ao clicar para voltar */
+    border-color: #555;
+    cursor: pointer;
+}
+
+.detail-info {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.detail-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: normal;
+}
+
+.detail-numbers {
+  display: flex;
+  justify-content: space-around;
+  font-family: var(--font-header);
+  font-size: 3.5rem; 
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.detail-numbers span {
+    display: block; 
+    text-align: center;
+    min-width: 45%; 
+    transition: font-size 0.3s;
+}
+
+/* Ajusta a barra de estado para garantir que fica na base */
+.status-bar.detail {
+    border-radius: 0 0 20px 20px;
+}
+
+.click-hint {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+
+/* --- FOOTER --- */
+.footer-area {
+  margin-top: auto;
+}
+
+.back-btn-stats {
+  background-color: black;
+  color: white;
+  padding: 0.8rem 3rem;
+  border-radius: 30px;
+  font-family: var(--font-header);
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-btn-stats:hover {
+  background-color: #333;
+}
+
+@media (max-width: 900px) {
+  .stats-content-grid, .stats-content-grid.detail-open {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 90%;
+  }
+  
+  .stats-main-title {
+    font-size: 3rem;
+  }
+  
+  .top-searches-card {
+    height: 500px;
+  }
+  
+  .barrel-detail-view {
+    height: 500px; 
+  }
+  
+  .barrel-card.detail-card {
+    width: 90%;
+    height: calc(500px - 80px);
+  }
+  
+  .detail-numbers {
+    font-size: 2.5rem;
+  }
+}

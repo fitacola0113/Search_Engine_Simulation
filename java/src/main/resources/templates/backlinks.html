@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Consultar Backlinks</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <a href="/">&larr; Voltar à Pesquisa</a>
+        </nav>
+        <hgroup>
+            <h1>Consultar Backlinks</h1>
+            <h2>Veja que páginas apontam para um determinado URL</h2>
+        </hgroup>
+
+        <form action="/backlinks" method="get">
+            <input type="url" name="url" placeholder="https://example.com" th:value="${targetUrl}" required>
+            <button type="submit">Procurar Backlinks</button>
+        </form>
+
+        <div th:if="${targetUrl}">
+            <h3 th:text="'Backlinks para: ' + ${targetUrl}"></h3>
+            <div id="backlinks-container">
+                <div th:if="${backlinks.isEmpty()}"><p>Nenhum backlink encontrado.</p></div>
+                <article th:each="link : ${backlinks}">
+                    <h4 th:text="${link.title}"></h4>
+                    <a th:href="${link.url}" th:text="${link.url}" target="_blank"></a>
+                    <p th:text="${link.snippet}"></p>
+                </article>
+            </div>
+            <div id="load-more-container" th:if="${hasMore}">
+                <button id="load-more-btn">Carregar mais</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Este script é idêntico ao de search-results, mas chama /backlinks/more
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', async () => {
+                loadMoreBtn.setAttribute('aria-busy', 'true');
+                const response = await fetch('/backlinks/more');
+                const newResults = await response.json();
+                if (newResults.length === 0) {
+                    document.getElementById('load-more-container').innerHTML = '<p>Não há mais resultados.</p>';
+                } else {
+                    const container = document.getElementById('backlinks-container');
+                    newResults.forEach(result => {
+                        const article = document.createElement('article');
+                        article.innerHTML = `<h4>${result.title}</h4><a href="${result.url}" target="_blank">${result.url}</a><p>${result.snippet}</p>`;
+                        container.appendChild(article);
+                    });
+                }
+                loadMoreBtn.removeAttribute('aria-busy');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Indexar Novo URL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <a href="/">&larr; Voltar à Pesquisa</a>
+        </nav>
+        <hgroup>
+            <h1>Indexar Novo URL</h1>
+            <h2>Adicione uma página à fila de indexação</h2>
+        </hgroup>
+        <form id="index-form">
+            <label for="url">URL para indexar</label>
+            <input type="url" id="url" name="url" placeholder="https://example.com" required>
+            <button type="submit">Indexar URL</button>
+        </form>
+        <div id="response-message" style="margin-top: 1rem;"></div>
+    </main>
+
+    <script>
+        const form = document.getElementById('index-form');
+        const responseDiv = document.getElementById('response-message');
+        const submitBtn = form.querySelector('button');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.setAttribute('aria-busy', 'true');
+            responseDiv.textContent = '';
+
+            const formData = new URLSearchParams(new FormData(form));
+
+            try {
+                const response = await fetch('/index', {
+                    method: 'POST',
+                    body: formData
+                });
+                const resultText = await response.text();
+                responseDiv.textContent = resultText;
+            } catch (error) {
+                console.error('Erro ao indexar:', error);
+                responseDiv.textContent = 'Ocorreu um erro de rede.';
+            } finally {
+                submitBtn.removeAttribute('aria-busy');
+            }
+        });
+    </script>
+</body>
+</html>
